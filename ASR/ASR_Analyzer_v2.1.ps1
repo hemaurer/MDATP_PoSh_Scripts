@@ -1,4 +1,4 @@
-﻿$RulesIds = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Ids
+$RulesIds = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Ids
 $RulesActions = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Actions
 $RulesExclusions = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionOnlyExclusions
 
@@ -9,11 +9,13 @@ $counter = 0
 $TotalNotConfigured = 0
 $TotalAudit = 0
 $TotalBlock = 0
+$TotalWarn = 0
 
 ForEach ($i in $RulesActions){
     If ($RulesActions[$counter] -eq 0){$TotalNotConfigured++}
     ElseIf ($RulesActions[$counter] -eq 1){$TotalAudit++}
     ElseIf ($RulesActions[$counter] -eq 2){$TotalBlock++}
+    ElseIf ($RulesActions[$counter] -eq 6){$TotalWarn++}
     $counter++
 }
 
@@ -21,7 +23,7 @@ Write-Host
 Write-Host ====================================== ASR Summary ======================================
 
 Write-Host "=> There's"($RulesIds).Count"rules configured"
-Write-Host "=>"$TotalNotConfigured "in Disabled Mode **" $TotalAudit "in Audit Mode **" $TotalBlock "in Block Mode"
+Write-Host "=>"$TotalNotConfigured "in Disabled Mode **" $TotalAudit "in Audit Mode **" $TotalBlock "in Block Mode**" $totalWarn "in Warn Mode"
 
 Write-Host 
 Write-Host ====================================== ASR Rules ======================================
@@ -49,6 +51,7 @@ ForEach ($j in $RulesIds){
     If ($RulesActions[$counter] -eq 0){$RuleAction = "Disabled"}
     ElseIf ($RulesActions[$counter] -eq 1){$RuleAction = "Audit"}
     ElseIf ($RulesActions[$counter] -eq 2){$RuleAction = "Block"}
+    ElseIf ($RulesActions[$counter] -eq 6){$RuleAction = "Warn"}
     ## Output Rule Id, Name and Action
     Write-Host "=>" $RulesIdsArray[$counter] " **" $RuleName "**" "Action:"$RuleAction
     $counter++
@@ -63,4 +66,4 @@ $counter = 0
 ForEach ($f in $RulesExclusions){
     Write-Host "=>" $RulesExclusions[$counter]
     $counter++
-    }
+}
